@@ -1,0 +1,616 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KIZAR — Builder from Algiers</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#050505;--surface:#0d0d0d;--surface2:#161616;--amber:#f59e0b;--amber2:#fbbf24;--amber3:rgba(245,158,11,.12);--lime:#a3e635;--lime3:rgba(163,230,53,.1);--coral:#fb7185;--coral3:rgba(251,113,133,.1);--text:#f0f0f0;--text2:#737373;--text3:#404040;--border:#1a1a1a;--radius:14px}
+html{scroll-behavior:smooth}
+body{font-family:'Space Grotesk',system-ui,sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden;line-height:1.6;-webkit-font-smoothing:antialiased}
+::selection{background:var(--amber);color:#000}
+a{color:inherit;text-decoration:none}
+
+/* ===== CUSTOM CURSOR ===== */
+#cursor{position:fixed;width:18px;height:18px;border:1.5px solid var(--amber);border-radius:50%;pointer-events:none;z-index:10001;transition:width .3s cubic-bezier(.23,1,.32,1),height .3s cubic-bezier(.23,1,.32,1),border-color .3s,background .3s;border-color:var(--amber);opacity:0}
+body:hover #cursor{opacity:1}
+#cursor.dot{width:48px;height:48px;background:rgba(245,158,11,.08);border-color:var(--lime)}
+#cursor-dot{position:fixed;width:4px;height:4px;border-radius:50%;background:var(--amber);pointer-events:none;z-index:10001;transform:translate(-50%,-50%);opacity:0}
+body:hover #cursor-dot{opacity:1}
+@media(pointer:coarse){#cursor,#cursor-dot{display:none!important}}
+
+/* ===== GRAIN OVERLAY ===== */
+.grain{position:fixed;inset:-50%;width:200%;height:200%;pointer-events:none;z-index:9998;opacity:.035;mix-blend-mode:overlay;background:url("data:image/svg+xml,%3Csvg viewBox='0 0 300 300' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.82' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");animation:grain .5s steps(5) infinite}
+@keyframes grain{0%{transform:translate(0,0)}20%{transform:translate(-2%,3%)}40%{transform:translate(3%,-1%)}60%{transform:translate(-1%,-3%)}80%{transform:translate(2%,2%)}100%{transform:translate(0,0)}}
+@media(prefers-reduced-motion:reduce){.grain{animation:none}}
+
+/* ===== SCROLL PROGRESS ===== */
+.progress{position:fixed;top:0;left:0;height:2px;width:0;background:linear-gradient(90deg,var(--amber),var(--lime),var(--coral));z-index:10000}
+
+/* ===== NAV ===== */
+nav{position:fixed;top:0;left:0;right:0;z-index:1000;height:60px;display:flex;align-items:center;justify-content:space-between;padding:0 clamp(20px,5vw,40px);background:rgba(5,5,5,.7);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}
+.nav-name{font-size:18px;font-weight:700;color:var(--amber);letter-spacing:-.5px}
+.nav-links{display:flex;gap:2px}
+.nav-links a{padding:7px 14px;border-radius:8px;font-size:13px;font-weight:500;color:var(--text2);transition:all .25s;position:relative;overflow:hidden}
+.nav-links a::after{content:'';position:absolute;bottom:4px;left:14px;right:14px;height:1px;background:var(--amber);transform:scaleX(0);transform-origin:right;transition:transform .3s cubic-bezier(.23,1,.32,1)}
+.nav-links a:hover{color:var(--text)}
+.nav-links a:hover::after{transform:scaleX(1);transform-origin:left}
+.hamburger{display:none;background:none;border:none;color:var(--text);cursor:pointer;padding:8px;z-index:1001}
+.hamburger span{display:block;width:22px;height:2px;background:var(--text);margin:5px 0;border-radius:2px;transition:all .3s cubic-bezier(.23,1,.32,1)}
+.hamburger.open span:nth-child(1){transform:rotate(45deg) translate(5px,5px)}
+.hamburger.open span:nth-child(2){opacity:0}
+.hamburger.open span:nth-child(3){transform:rotate(-45deg) translate(5px,-5px)}
+#mobile-nav{display:none;position:fixed;top:60px;left:0;right:0;z-index:999;background:rgba(5,5,5,.97);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:16px 24px 24px;opacity:0;transform:translateY(-10px);transition:opacity .3s,transform .3s}
+#mobile-nav.open{display:block;opacity:1;transform:translateY(0)}
+#mobile-nav a{display:block;padding:14px 16px;border-radius:10px;font-size:16px;color:var(--text2);margin-bottom:4px;transition:all .2s}
+#mobile-nav a:hover{background:var(--amber3);color:var(--amber)}
+
+/* ===== REVEAL SYSTEM ===== */
+.reveal{opacity:0;transform:translateY(30px);transition:opacity .8s cubic-bezier(.16,1,.3,1),transform .8s cubic-bezier(.16,1,.3,1)}
+.reveal.vis{opacity:1;transform:none}
+.r-d1{transition-delay:.1s}.r-d2{transition-delay:.2s}.r-d3{transition-delay:.3s}.r-d4{transition-delay:.4s}.r-d5{transition-delay:.5s}.r-d6{transition-delay:.6s}
+section{max-width:1100px;margin:0 auto;padding:100px 24px 60px}
+h2{font-size:clamp(28px,4vw,44px);font-weight:700;letter-spacing:-.8px;margin-bottom:12px;line-height:1.15}
+h2 .hl{color:var(--amber);position:relative;display:inline-block}
+h2 .hl::after{content:'';position:absolute;bottom:-2px;left:0;right:0;height:3px;background:var(--amber);border-radius:2px;transform:scaleX(0);transform-origin:left;transition:transform .6s cubic-bezier(.23,1,.32,1)}
+h2.vis .hl::after{transform:scaleX(1)}
+
+/* ===== BLOB ===== */
+.blob{position:absolute;border-radius:50%;filter:blur(100px);opacity:.06;pointer-events:none;animation:blob-float 14s ease-in-out infinite alternate}
+@keyframes blob-float{0%{transform:translate(0,0) scale(1)}33%{transform:translate(30px,-40px) scale(1.1)}66%{transform:translate(-20px,30px) scale(.9)}100%{transform:translate(10px,-20px) scale(1.05)}}
+
+/* ===== HERO ===== */
+.hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;position:relative;max-width:1100px;margin:0 auto;padding:120px 24px 60px;overflow:hidden}
+.hero-greeting{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--amber);margin-bottom:24px;letter-spacing:3px;text-transform:uppercase;overflow:hidden}
+.hero-greeting span{display:inline-block;opacity:0;transform:translateY(20px);animation:fade-up .6s .3s forwards}
+.hero-greeting .blink{animation:blink 1s step-end infinite,fade-up .6s .3s forwards}
+@keyframes fade-up{to{opacity:1;transform:translateY(0)}}
+@keyframes blink{50%{opacity:0}}
+.hero h1{font-size:clamp(42px,8vw,80px);font-weight:700;line-height:1.02;letter-spacing:-3px;margin-bottom:24px;overflow:hidden}
+.hero h1 .line2{color:var(--amber);display:block}
+.hero h1 .char{display:inline-block;opacity:0;transform:translateY(80px) rotate(20deg);transition:opacity .5s cubic-bezier(.16,1,.3,1),transform .6s cubic-bezier(.23,1,.32,1)}
+.hero h1 .char.vis{opacity:1;transform:none}
+.hero-sub{font-size:clamp(15px,1.8vw,18px);color:var(--text2);max-width:540px;line-height:1.75;margin-bottom:36px;overflow:hidden}
+.hero-sub span{display:inline-block;opacity:0;transform:translateY(30px);transition:opacity .7s .7s,transform .7s cubic-bezier(.23,1,.32,1) .7s}
+.hero-sub.vis span{opacity:1;transform:none}
+.hero-btns{display:flex;gap:12px;flex-wrap:wrap;overflow:hidden;opacity:0;transform:translateY(20px);transition:all .7s .9s}
+.hero-btns.vis{opacity:1;transform:none}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:13px 30px;border-radius:10px;font-size:14px;font-weight:600;text-decoration:none;transition:all .25s cubic-bezier(.23,1,.32,1);cursor:pointer;border:none;font-family:inherit;position:relative;overflow:hidden}
+.btn-amber{background:var(--amber);color:#000}
+.btn-amber::before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.25),transparent);transform:translateX(-100%);transition:transform .6s}
+.btn-amber:hover::before{transform:translateX(100%)}
+.btn-amber:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(245,158,11,.3)}
+.btn-ghost{background:transparent;color:var(--text);border:1px solid var(--border)}
+.btn-ghost:hover{border-color:var(--amber);color:var(--amber);background:var(--amber3)}
+.hero-stats{display:flex;gap:48px;margin-top:56px;padding-top:32px;border-top:1px solid var(--border);overflow:hidden;opacity:0;transform:translateY(20px);transition:all .7s 1.1s}
+.hero-stats.vis{opacity:1;transform:none}
+.hero-stat .num{font-size:32px;font-weight:700;color:var(--amber);font-family:'JetBrains Mono',monospace;display:inline-block;opacity:0;transform:translateY(20px)}
+.hero-stat .num.vis{opacity:1;transform:none;transition:all .5s cubic-bezier(.23,1,.32,1)}
+.hero-stat .label{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:1.5px;margin-top:6px}
+
+/* ===== MARQUEE ===== */
+.marquee-wrap{overflow:hidden;padding:40px 0;position:relative;mask-image:linear-gradient(to right,transparent,black 8%,black 92%,transparent);-webkit-mask-image:linear-gradient(to right,transparent,black 8%,black 92%,transparent)}
+.marquee-track{display:flex;width:max-content;animation:marquee 40s linear infinite}
+.marquee-track:hover{animation-play-state:paused}
+@keyframes marquee{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.marquee-item{flex-shrink:0;padding:0 2rem;font-size:14px;font-weight:600;color:var(--text3);display:flex;align-items:center;gap:10px;white-space:nowrap;transition:color .3s}
+.marquee-item:hover{color:var(--amber)}
+.mi-dot{width:5px;height:5px;border-radius:50%;background:var(--amber);opacity:.3}
+@media(prefers-reduced-motion:reduce){.marquee-track{animation:none}}
+
+/* ===== ABOUT ===== */
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:start}
+.about-text p{font-size:15px;color:var(--text2);line-height:1.85;margin-bottom:16px}
+.about-text p strong{color:var(--text);font-weight:600}
+.code-window{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;position:relative}
+.code-titlebar{display:flex;align-items:center;gap:8px;padding:12px 16px;background:var(--surface2);border-bottom:1px solid var(--border)}
+.code-dot{width:10px;height:10px;border-radius:50%}
+.code-dot.r{background:#ef4444}.code-dot.y{background:#eab308}.code-dot.g{background:#22c55e}
+.code-titlebar span{font-size:11px;color:var(--text3);margin-left:auto;font-family:'JetBrains Mono',monospace}
+.code-body{padding:20px;font-family:'JetBrains Mono',monospace;font-size:12px;line-height:2.2;overflow-x:auto;white-space:pre}
+.cl-amber{color:var(--amber)}.cl-lime{color:var(--lime)}.cl-coral{color:var(--coral)}.cl-dim{color:var(--text3)}
+
+/* ===== SKILLS ===== */
+.skills-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin-top:32px}
+.skill-card{padding:24px;border-radius:var(--radius);border:1px solid var(--border);background:var(--surface);transition:all .4s cubic-bezier(.23,1,.32,1);position:relative;overflow:hidden;transform-style:preserve-3d}
+.skill-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--amber),var(--lime));transform:scaleX(0);transform-origin:left;transition:transform .5s cubic-bezier(.23,1,.32,1)}
+.skill-card:hover{border-color:rgba(245,158,11,.15);transform:translateY(-4px)}
+.skill-card:hover::before{transform:scaleX(1)}
+.skill-card .tilt-glow{position:absolute;inset:0;border-radius:inherit;background:radial-gradient(circle at var(--mx,50%) var(--my,50%),var(--amber3),transparent 60%);opacity:0;transition:opacity .3s;pointer-events:none;z-index:0}
+.skill-card:hover .tilt-glow{opacity:1}
+.skill-icon{font-size:22px;margin-bottom:14px;display:inline-block;position:relative;z-index:1;transition:transform .4s cubic-bezier(.23,1,.32,1)}
+.skill-card:hover .skill-icon{transform:scale(1.2) rotate(-8deg)}
+.skill-card h3{font-size:15px;font-weight:600;margin-bottom:6px;position:relative;z-index:1}
+.skill-card p{font-size:13px;color:var(--text2);line-height:1.65;position:relative;z-index:1}
+
+/* ===== PROJECTS ===== */
+.projects-grid{display:grid;gap:16px;margin-top:32px}
+.project-card{display:grid;grid-template-columns:1fr auto;gap:24px;padding:32px;border-radius:16px;border:1px solid var(--border);background:var(--surface);transition:all .4s cubic-bezier(.23,1,.32,1);position:relative;overflow:hidden}
+@property --angle{syntax:'<angle>';initial-value:0deg;inherits:false}
+.project-card::before{content:'';position:absolute;top:-1px;left:-1px;right:-1px;height:2px;background:conic-gradient(from var(--angle,0deg),var(--amber),var(--lime),var(--coral),var(--amber));opacity:0;transition:opacity .4s;z-index:1}
+.project-card:hover::before{opacity:1;animation:rotate-border 3s linear infinite}
+@keyframes rotate-border{to{--angle:360deg}}
+.project-card:hover{border-color:transparent;transform:translateY(-3px)}
+.project-info{position:relative;z-index:2}
+.project-tag{display:inline-block;padding:3px 10px;border-radius:999px;font-size:10px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;margin-bottom:12px}
+.tag-mobile{background:var(--lime3);color:var(--lime)}.tag-web{background:var(--coral3);color:var(--coral)}.tag-desktop{background:var(--amber3);color:var(--amber)}
+.project-card h3{font-size:19px;font-weight:700;margin-bottom:6px}
+.project-card .desc{font-size:13px;color:var(--text2);line-height:1.65;margin-bottom:14px}
+.project-meta{display:flex;gap:14px;flex-wrap:wrap;font-size:11px;color:var(--text3)}
+.project-links{display:flex;flex-direction:column;gap:8px;justify-content:center;position:relative;z-index:2}
+.project-link{padding:9px 18px;border-radius:8px;font-size:12px;font-weight:600;text-align:center;transition:all .25s cubic-bezier(.23,1,.32,1);border:1px solid var(--border);color:var(--text2);white-space:nowrap}
+.project-link:hover{border-color:var(--amber);color:var(--amber);background:var(--amber3);transform:translateX(4px)}
+.project-link.primary{background:var(--amber);color:#000;border-color:var(--amber)}
+.project-link.primary:hover{background:var(--amber2);box-shadow:0 4px 16px rgba(245,158,11,.25)}
+
+/* ===== JOURNEY ===== */
+.timeline{position:relative;padding-left:40px;margin-top:32px}
+.timeline::before{content:'';position:absolute;left:9px;top:0;bottom:0;width:2px;background:linear-gradient(180deg,var(--amber),var(--border) 80%,transparent)}
+.tl-item{position:relative;margin-bottom:40px}
+.tl-item::before{content:'';position:absolute;left:-35px;top:8px;width:10px;height:10px;border-radius:50%;background:var(--bg);border:2px solid var(--amber);transition:all .3s cubic-bezier(.23,1,.32,1)}
+.tl-item:hover::before{background:var(--amber);box-shadow:0 0 16px rgba(245,158,11,.3);transform:scale(1.3)}
+.tl-date{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--amber);margin-bottom:6px;letter-spacing:1px}
+.tl-item h3{font-size:16px;font-weight:600;margin-bottom:4px}
+.tl-item p{font-size:13px;color:var(--text2);line-height:1.7}
+
+/* ===== CONTACT ===== */
+.contact-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:32px}
+.contact-card{padding:28px 20px;border-radius:var(--radius);border:1px solid var(--border);background:var(--surface);text-decoration:none;color:var(--text);transition:all .4s cubic-bezier(.23,1,.32,1);text-align:center;position:relative;overflow:hidden}
+.contact-card::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 50% 120%,var(--amber3),transparent 70%);opacity:0;transition:opacity .4s}
+.contact-card:hover{border-color:rgba(245,158,11,.2);transform:translateY(-5px)}
+.contact-card:hover::before{opacity:1}
+.contact-card .c-icon{font-size:28px;margin-bottom:12px;position:relative;z-index:1;transition:transform .4s cubic-bezier(.23,1,.32,1)}
+.contact-card:hover .c-icon{transform:scale(1.15) translateY(-3px)}
+.contact-card h3{font-size:14px;font-weight:600;margin-bottom:4px;position:relative;z-index:1}
+.contact-card p{font-size:12px;color:var(--text2);position:relative;z-index:1}
+
+/* ===== FOOTER ===== */
+footer{text-align:center;padding:48px 24px;border-top:1px solid var(--border);font-size:12px;color:var(--text3)}
+footer a{color:var(--amber);position:relative}
+footer a::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:1px;background:var(--amber);transform:scaleX(0);transition:transform .3s}
+footer a:hover::after{transform:scaleX(1)}
+
+/* ===== MAGNETIC BUTTON ===== */
+.magnetic{display:inline-block;transition:transform .3s cubic-bezier(.23,1,.32,1)}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:768px){
+  .nav-links{display:none}.hamburger{display:block}
+  .about-grid{grid-template-columns:1fr;gap:32px}
+  .project-card{grid-template-columns:1fr}
+  .project-links{flex-direction:row}
+  .hero-stats{gap:24px;flex-wrap:wrap}
+  .hero h1{letter-spacing:-1.5px}
+  .skills-grid{grid-template-columns:1fr 1fr}
+  section{padding:80px 20px 40px}
+}
+@media(max-width:480px){
+  .skills-grid{grid-template-columns:1fr}
+  .contact-grid{grid-template-columns:1fr}
+  .hero{padding:100px 16px 40px}
+}
+</style>
+</head>
+<body>
+<div id="cursor"></div>
+<div id="cursor-dot"></div>
+<div class="grain"></div>
+<div class="progress" id="progress"></div>
+
+<nav>
+  <div class="nav-name">KIZAR<span style="color:var(--amber)">.</span></div>
+  <div class="nav-links">
+    <a href="#about">About</a>
+    <a href="#skills">Skills</a>
+    <a href="#projects">Projects</a>
+    <a href="#journey">Journey</a>
+    <a href="#contact">Contact</a>
+  </div>
+  <button class="hamburger" id="burger" aria-label="Menu"><span></span><span></span><span></span></button>
+</nav>
+<div id="mobile-nav">
+  <a href="#about">About</a>
+  <a href="#skills">Skills</a>
+  <a href="#projects">Projects</a>
+  <a href="#journey">Journey</a>
+  <a href="#contact">Contact</a>
+</div>
+
+<section class="hero" id="top">
+  <div class="blob" style="width:500px;height:500px;background:var(--amber);top:-15%;right:-10%"></div>
+  <div class="blob" style="width:400px;height:400px;background:var(--lime);bottom:5%;left:-12%;animation-delay:-5s"></div>
+  <div class="hero-greeting reveal"><span class="blink">_</span> hello, i'm</div>
+  <h1><span class="char-line" data-split>KIZAR</span><br><span class="line2"><span class="char-line" data-split>from Algiers</span></span></h1>
+  <p class="hero-sub reveal"><span>I build things that work. Android apps, APIs, backends, frontends — if it needs code, I've probably broken it and fixed it at 3am.</span></p>
+  <div class="hero-btns reveal">
+    <a href="#projects" class="btn btn-amber magnetic">See my work</a>
+    <a href="https://github.com/rkkizar777-design" target="_blank" class="btn btn-ghost magnetic">GitHub ↗</a>
+  </div>
+  <div class="hero-stats reveal">
+    <div class="hero-stat"><div class="num" data-count="44">0</div><div class="label">Releases shipped</div></div>
+    <div class="hero-stat"><div class="num" data-count="9500">0</div><div class="label">Lines in one file</div></div>
+    <div class="hero-stat"><div class="num" data-count="0">0</div><div class="label">Servers needed</div></div>
+  </div>
+</section>
+
+<div class="marquee-wrap">
+  <div class="marquee-track">
+    <span class="marquee-item"><span class="mi-dot"></span>Android</span>
+    <span class="marquee-item"><span class="mi-dot"></span>Capacitor</span>
+    <span class="marquee-item"><span class="mi-dot"></span>React</span>
+    <span class="marquee-item"><span class="mi-dot"></span>GitHub API</span>
+    <span class="marquee-item"><span class="mi-dot"></span>Java</span>
+    <span class="marquee-item"><span class="mi-dot"></span>REST APIs</span>
+    <span class="marquee-item"><span class="mi-dot"></span>Caching</span>
+    <span class="marquee-item"><span class="mi-dot"></span>P2P Messaging</span>
+    <span class="marquee-item"><span class="mi-dot"></span>Rate Limiting</span>
+    <span class="marquee-item"><span class="mi-dot"></span>Offline-First</span>
+    <span class="marquee-item"><span class="mi-dot"></span>No Servers</span>
+    <span class="marquee-item"><span class="mi-dot"></span>Zero Tracking</span>
+    <!-- Duplicate for seamless loop -->
+    <span class="marquee-item"><span class="mi-dot"></span>Android</span>
+    <span class="marquee-item"><span class="mi-dot"></span>Capacitor</span>
+    <span class="marquee-item"><span class="mi-dot"></span>React</span>
+    <span class="marquee-item"><span class="mi-dot"></span>GitHub API</span>
+    <span class="marquee-item"><span class="mi-dot"></span>Java</span>
+    <span class="marquee-item"><span class="mi-dot"></span>REST APIs</span>
+    <span class="marquee-item"><span class="mi-dot"></span>Caching</span>
+    <span class="marquee-item"><span class="mi-dot"></span>P2P Messaging</span>
+    <span class="marquee-item"><span class="mi-dot"></span>Rate Limiting</span>
+    <span class="marquee-item"><span class="mi-dot"></span>Offline-First</span>
+    <span class="marquee-item"><span class="mi-dot"></span>No Servers</span>
+    <span class="marquee-item"><span class="mi-dot"></span>Zero Tracking</span>
+  </div>
+</div>
+
+<section id="about">
+  <h2 class="reveal">About <span class="hl">me</span></h2>
+  <div class="about-grid">
+    <div class="about-text">
+      <p class="reveal">I'm Kizar, a builder from Algiers, Algeria. I don't call myself a "full-stack developer" because that title gets thrown around too loosely. I'm the person who actually makes the whole thing work — from the native Android plugin that downloads files, to the API layer that handles rate limits, to the frontend that shows it all.</p>
+      <p class="reveal r-d1">My philosophy: <strong>"If it takes more than two clicks, it should be automated."</strong> That's not just a bio — it's how I actually build. Every app I make is about removing friction.</p>
+      <p class="reveal r-d2">I work alone on my projects. That means I'm the frontend dev, the backend dev, the API integrator, the DevOps person, the QA tester, and the person who fixes the bug at 3am. I've shipped 44 releases of my main project in about two months.</p>
+      <p class="reveal r-d3">I don't use AI to write my code. I use it to research, to understand APIs, to debug faster. The actual architecture, the error handling, the retry logic, the caching strategies — that's all me figuring it out by reading docs, breaking things, and putting them back together better.</p>
+    </div>
+    <div class="reveal r-d2">
+      <div class="code-window">
+        <div class="code-titlebar">
+          <div class="code-dot r"></div><div class="code-dot y"></div><div class="code-dot g"></div>
+          <span>kizar.ts</span>
+        </div>
+        <div class="code-body"><span class="cl-amber">const</span> <span class="cl-lime">kizar</span> = {
+  <span class="cl-amber">location</span>: <span class="cl-coral">"Algiers, Algeria"</span>,
+  <span class="cl-amber">philosophy</span>: <span class="cl-coral">"2 clicks max"</span>,
+  <span class="cl-amber">builds</span>: [<span class="cl-coral">"Android"</span>, <span class="cl-coral">"APIs"</span>, <span class="cl-coral">"Frontends"</span>],
+  <span class="cl-amber">releases</span>: <span class="cl-lime">44</span>,
+  <span class="cl-amber">servers</span>: <span class="cl-lime">0</span>,
+  <span class="cl-amber">tracking</span>: <span class="cl-lime">0</span>,
+  <span class="cl-amber">sleep</span>: <span class="cl-coral">"optional"</span>,
+};</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="skills">
+  <h2 class="reveal">What I <span class="hl">actually</span> do</h2>
+  <p class="reveal" style="color:var(--text2);font-size:15px;max-width:600px">Not a buzzword list. These are things I've built with, broken, and fixed.</p>
+  <div class="skills-grid">
+    <div class="skill-card reveal">
+      <div class="tilt-glow"></div>
+      <div class="skill-icon">&#128241;</div>
+      <h3>Android / Capacitor</h3>
+      <p>Native Android plugins in Java. Download managers, file providers, install intents. Not just wrapping a webview — I write the native bridges when Capacitor isn't enough.</p>
+    </div>
+    <div class="skill-card reveal r-d1">
+      <div class="tilt-glow"></div>
+      <div class="skill-icon">&#9889;</div>
+      <h3>API Integration</h3>
+      <p>GitHub API, rate limiting, proxy handling, retry logic with exponential backoff. Fetch layers that survive 503 errors, token expiry, and network failures gracefully.</p>
+    </div>
+    <div class="skill-card reveal r-d2">
+      <div class="tilt-glow"></div>
+      <div class="skill-icon">&#128640;</div>
+      <h3>Frontend / React</h3>
+      <p>Complex state management, 9500+ line single files, real-time updates, intersection observers, scroll-driven animations. Not pretty — functional.</p>
+    </div>
+    <div class="skill-card reveal r-d3">
+      <div class="tilt-glow"></div>
+      <div class="skill-icon">&#128230;</div>
+      <h3>Caching &amp; Offline</h3>
+      <p>In-memory caches, persistent localStorage with versioning, stale-while-revalidate patterns, 24-hour persistent cache. Your data loads instantly.</p>
+    </div>
+    <div class="skill-card reveal">
+      <div class="tilt-glow"></div>
+      <div class="skill-icon">&#128172;</div>
+      <h3>Real-time Features</h3>
+      <p>P2P messaging, chat systems, polling mechanisms. Built a full messaging system without a server.</p>
+    </div>
+    <div class="skill-card reveal r-d1">
+      <div class="tilt-glow"></div>
+      <div class="skill-icon">&#128737;</div>
+      <h3>Error Handling</h3>
+      <p>Retry logic, fallback chains, graceful degradation. If one method fails, two more are waiting. I don't let apps crash.</p>
+    </div>
+    <div class="skill-card reveal r-d2">
+      <div class="tilt-glow"></div>
+      <div class="skill-icon">&#128187;</div>
+      <h3>Backend / APIs</h3>
+      <p>REST API design, GitHub proxy servers, OAuth flows, token management. Build backends that don't need to exist.</p>
+    </div>
+    <div class="skill-card reveal r-d3">
+      <div class="tilt-glow"></div>
+      <div class="skill-icon">&#127942;</div>
+      <h3>Deployment</h3>
+      <p>GitHub Releases, Vercel, Gradle builds, Android signing. From code to APK in your hands. Automated pipelines that work.</p>
+    </div>
+  </div>
+</section>
+
+<section id="projects">
+  <h2 class="reveal">Projects <span class="hl">I've built</span></h2>
+  <p class="reveal" style="color:var(--text2);font-size:15px;max-width:600px">Real apps, real problems, real solutions. Click the links — they work.</p>
+  <div class="projects-grid">
+    <div class="project-card reveal">
+      <div class="project-info">
+        <div class="project-tag tag-mobile">Android App</div>
+        <h3>GitSearch Mobile</h3>
+        <div class="desc">A native Android app for exploring GitHub. Search repos, read READMEs, download APKs, chat with developers, follow people, earn achievements. Zero servers, zero tracking, zero login required.</div>
+        <div class="project-meta">
+          <span>&#9733; 2 stars</span>
+          <span>44 releases</span>
+          <span>React + Capacitor</span>
+          <span>Java native plugins</span>
+        </div>
+      </div>
+      <div class="project-links">
+        <a href="https://github.com/rkkizar777-design/git.store.apk/releases/download/v1.0.0.44/gitsearch.apk" class="project-link primary magnetic" target="_blank">Download APK</a>
+        <a href="https://github.com/rkkizar777-design/git.store.apk" class="project-link magnetic" target="_blank">Source Code</a>
+      </div>
+    </div>
+    <div class="project-card reveal r-d1">
+      <div class="project-info">
+        <div class="project-tag tag-web">Landing Page</div>
+        <h3>GitSearch Website</h3>
+        <div class="desc">Dark-themed landing page with interactive phone mockup, version history timeline, and responsive design. Deployed on Vercel.</div>
+        <div class="project-meta">
+          <span>HTML/CSS/JS</span>
+          <span>Vercel deploy</span>
+          <span>Responsive</span>
+        </div>
+      </div>
+      <div class="project-links">
+        <a href="https://gitsearch-site.vercel.app" class="project-link primary magnetic" target="_blank">Live Site</a>
+        <a href="https://github.com/rkkizar777-design/gitsearch-website" class="project-link magnetic" target="_blank">Source Code</a>
+      </div>
+    </div>
+    <div class="project-card reveal r-d2">
+      <div class="project-info">
+        <div class="project-tag tag-desktop">Desktop App</div>
+        <h3>Git Store (PC)</h3>
+        <div class="desc">Desktop version of the GitHub exploration app. Same philosophy — fast, private, no BS. Search, read docs, manage repos from your computer.</div>
+        <div class="project-meta">
+          <span>&#9733; 1 star</span>
+          <span>Cross-platform</span>
+          <span>Open source</span>
+        </div>
+      </div>
+      <div class="project-links">
+        <a href="https://github.com/rkkizar777-design/git.store/releases" class="project-link primary magnetic" target="_blank">Download</a>
+        <a href="https://github.com/rkkizar777-design/git.store" class="project-link magnetic" target="_blank">Source Code</a>
+      </div>
+    </div>
+    <div class="project-card reveal r-d3">
+      <div class="project-info">
+        <div class="project-tag tag-mobile">Feature</div>
+        <h3>GitStore — APK Store</h3>
+        <div class="desc">Built-in APK store inside GitSearch. Browse repos that ship APK releases, one-tap install, version picker, bookmarks, rate limit handling with wait-and-retry.</div>
+        <div class="project-meta">
+          <span>Multi-query search</span>
+          <span>24h cache</span>
+          <span>Native download</span>
+        </div>
+      </div>
+      <div class="project-links">
+        <a href="https://github.com/rkkizar777-design/git.store.apk" class="project-link magnetic" target="_blank">Part of GitSearch</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="journey">
+  <h2 class="reveal">The <span class="hl">journey</span></h2>
+  <p class="reveal" style="color:var(--text2);font-size:15px;max-width:600px">What I've been building and learning.</p>
+  <div class="timeline">
+    <div class="tl-item reveal">
+      <div class="tl-date">AUG 2026</div>
+      <h3>GitSearch reaches v1.0.0.44</h3>
+      <p>Cache-first UX, hardened API layer, APK detection that actually works, 24-hour persistent cache. 44 releases in 2 months.</p>
+    </div>
+    <div class="tl-item reveal r-d1">
+      <div class="tl-date">AUG 2026</div>
+      <h3>GitStore — the APK store</h3>
+      <p>Built an in-app APK store that searches GitHub repos, detects release assets, handles rate limits, and installs APKs directly. Wrote a native Java download plugin from scratch.</p>
+    </div>
+    <div class="tl-item reveal r-d2">
+      <div class="tl-date">AUG 2026</div>
+      <h3>GitChat &amp; Social features</h3>
+      <p>Added P2P messaging, user following, personalized feeds, achievements system. All without a backend server.</p>
+    </div>
+    <div class="tl-item reveal r-d3">
+      <div class="tl-date">JUL 2026</div>
+      <h3>First Android app built with Capacitor</h3>
+      <p>Started with React + Capacitor. Learned native Android plugins the hard way — by breaking them and fixing them repeatedly.</p>
+    </div>
+    <div class="tl-item reveal r-d4">
+      <div class="tl-date">APR 2026</div>
+      <h3>GitHub account created</h3>
+      <p>Started sharing code publicly. Philosophy: "If it takes more than two clicks, it should be automated."</p>
+    </div>
+  </div>
+</section>
+
+<section id="contact">
+  <h2 class="reveal">Let's <span class="hl">connect</span></h2>
+  <p class="reveal" style="color:var(--text2);font-size:15px;max-width:600px">I'm based in Algiers, Algeria. I build things that work.</p>
+  <div class="contact-grid">
+    <a href="https://github.com/rkkizar777-design" target="_blank" class="contact-card reveal magnetic">
+      <div class="c-icon">&#128187;</div>
+      <h3>GitHub</h3>
+      <p>rkkizar777-design</p>
+    </a>
+    <a href="https://gitsearch-site.vercel.app" target="_blank" class="contact-card reveal r-d1 magnetic">
+      <div class="c-icon">&#127760;</div>
+      <h3>GitSearch Site</h3>
+      <p>gitsearch-site.vercel.app</p>
+    </a>
+    <a href="https://github.com/rkkizar777-design/git.store.apk/releases/download/v1.0.0.44/gitsearch.apk" target="_blank" class="contact-card reveal r-d2 magnetic">
+      <div class="c-icon">&#128241;</div>
+      <h3>Download App</h3>
+      <p>GitSearch v1.0.0.44</p>
+    </a>
+    <div class="contact-card reveal r-d3">
+      <div class="c-icon">&#128205;</div>
+      <h3>Algiers</h3>
+      <p>Algeria</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>Built by <a href="https://github.com/rkkizar777-design">KIZAR</a> &middot; Algiers, Algeria &middot; No servers, no tracking, no BS</p>
+</footer>
+
+<script>
+(function(){
+  /* ===== CUSTOM CURSOR ===== */
+  var cx=document.getElementById('cursor'),cd=document.getElementById('cursor-dot');
+  var mx=0,my=0,cx2=0,cy2=0;
+  document.addEventListener('mousemove',function(e){mx=e.clientX;my=e.clientY;cd.style.left=mx+'px';cd.style.top=my+'px'});
+  (function loop(){cx2+=(mx-cx2)*.12;cy2+=(my-cy2)*.12;cx.style.left=cx2+'px';cx.style.top=cy2+'px';requestAnimationFrame(loop)})();
+  document.querySelectorAll('a,button,.skill-card,.project-card,.contact-card,.magnetic').forEach(function(el){
+    el.addEventListener('mouseenter',function(){cx.classList.add('dot')});
+    el.addEventListener('mouseleave',function(){cx.classList.remove('dot')});
+  });
+
+  /* ===== MAGNETIC BUTTONS ===== */
+  document.querySelectorAll('.magnetic').forEach(function(el){
+    el.addEventListener('mousemove',function(e){
+      var r=el.getBoundingClientRect();
+      var x=(e.clientX-r.left-r.width/2)*.25;
+      var y=(e.clientY-r.top-r.height/2)*.25;
+      el.style.transform='translate('+x+'px,'+y+'px)';
+    });
+    el.addEventListener('mouseleave',function(){el.style.transform='translate(0,0)'});
+  });
+
+  /* ===== HAMBURGER ===== */
+  document.getElementById('burger').onclick=function(){
+    this.classList.toggle('open');
+    document.getElementById('mobile-nav').classList.toggle('open');
+  };
+  document.querySelectorAll('#mobile-nav a').forEach(function(a){
+    a.onclick=function(){document.getElementById('burger').classList.remove('open');document.getElementById('mobile-nav').classList.remove('open')};
+  });
+
+  /* ===== SCROLL PROGRESS ===== */
+  var prog=document.getElementById('progress');
+  window.addEventListener('scroll',function(){
+    var pct=window.scrollY/(document.body.scrollHeight-window.innerHeight)*100;
+    prog.style.width=pct+'%';
+  },{passive:true});
+
+  /* ===== TEXT SPLIT REVEAL ===== */
+  document.querySelectorAll('[data-split]').forEach(function(el){
+    var text=el.textContent;
+    el.innerHTML='';
+    text.split('').forEach(function(c,i){
+      var span=document.createElement('span');
+      span.className='char';
+      span.textContent=c===' '?'\u00a0':c;
+      span.style.transitionDelay=(i*0.04)+'s';
+      el.appendChild(span);
+    });
+  });
+
+  /* ===== INTERSECTION OBSERVER REVEALS ===== */
+  var obs=new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){
+        e.target.classList.add('vis');
+        obs.unobserve(e.target);
+      }
+    });
+  },{threshold:0.08,rootMargin:'0px 0px -40px 0px'});
+  document.querySelectorAll('.reveal').forEach(function(el){obs.observe(el)});
+
+  /* ===== HERO CHARS REVEAL ===== */
+  var heroObs=new IntersectionObserver(function(entries){
+    if(entries[0].isIntersecting){
+      document.querySelectorAll('.char').forEach(function(c,i){
+        setTimeout(function(){c.classList.add('vis')},200+i*40);
+      });
+      heroObs.disconnect();
+    }
+  },{threshold:0.2});
+  var heroH1=document.querySelector('.hero h1');
+  if(heroH1) heroObs.observe(heroH1);
+
+  /* ===== COUNTER ANIMATION ===== */
+  var nums=document.querySelectorAll('.num[data-count]');
+  var countObs=new IntersectionObserver(function(entries){
+    if(entries[0].isIntersecting){
+      nums.forEach(function(el){
+        var target=parseInt(el.dataset.count);
+        var dur=target===0?300:1200;
+        var start=null;
+        el.classList.add('vis');
+        function step(ts){
+          if(!start)start=ts;
+          var p=Math.min((ts-start)/dur,1);
+          var ease=1-Math.pow(1-p,3);
+          el.textContent=Math.floor(ease*target).toLocaleString();
+          if(p<1)requestAnimationFrame(step);
+          else el.textContent=target.toLocaleString();
+        }
+        requestAnimationFrame(step);
+      });
+      countObs.disconnect();
+    }
+  },{threshold:0.5});
+  if(nums.length>0)countObs.observe(nums[0].parentElement.parentElement);
+
+  /* ===== 3D TILT ON SKILL CARDS ===== */
+  document.querySelectorAll('.skill-card').forEach(function(card){
+    var glow=card.querySelector('.tilt-glow');
+    card.addEventListener('mousemove',function(e){
+      var r=card.getBoundingClientRect();
+      var x=(e.clientX-r.left)/r.width;
+      var y=(e.clientY-r.top)/r.height;
+      var rx=(0.5-y)*12;
+      var ry=(x-0.5)*12;
+      card.style.transform='perspective(600px) rotateX('+rx+'deg) rotateY('+ry+'deg) translateZ(8px)';
+      if(glow){glow.style.setProperty('--mx',(x*100)+'%');glow.style.setProperty('--my',(y*100)+'%')}
+    });
+    card.addEventListener('mouseleave',function(){
+      card.style.transform='perspective(600px) rotateX(0) rotateY(0) translateZ(0)';
+    });
+  });
+
+  /* ===== NAV HIDE ON SCROLL DOWN ===== */
+  var lastY=0,nav=document.querySelector('nav');
+  window.addEventListener('scroll',function(){
+    var y=window.scrollY;
+    if(y>lastY&&y>100){nav.style.transform='translateY(-100%)';nav.style.transition='transform .3s'}
+    else{nav.style.transform='translateY(0)';nav.style.transition='transform .3s'}
+    lastY=y;
+  },{passive:true});
+
+})();
+</script>
+</body>
+</html>

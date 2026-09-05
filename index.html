@@ -231,6 +231,9 @@ h2 .hl::after{content:'';position:absolute;bottom:-4px;left:0;right:0;height:3px
 
 /* ===== PROJECTS ===== */
 .projects-grid{display:grid;gap:28px;margin-top:40px}
+.projects-cta{margin-top:32px}
+.projects-cta a{display:inline-flex;align-items:center;gap:8px;padding:13px 26px;border-radius:12px;font-size:13px;font-weight:700;background:linear-gradient(135deg,var(--amber),var(--lime));color:#000;transition:all .3s var(--ease)}
+.projects-cta a:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(245,158,11,.25)}
 .lostnote{--pj1:var(--amber);--pj2:var(--coral);--pj-glow:var(--coral-glow)}
 .gitsearch{--pj1:var(--amber);--pj2:var(--lime);--pj-glow:var(--lime-glow)}
 .gitstore{--pj1:var(--lime);--pj2:var(--amber);--pj-glow:var(--amber-glow)}
@@ -486,7 +489,7 @@ footer a:hover::after{transform:scaleX(1)}
     <a href="#services">Services</a>
     <a href="#skills">Skills</a>
     <a href="#tech">Tech</a>
-    <a href="#projects">Projects</a>
+    <a href="projects.html">Projects</a>
     <a href="#journey">Journey</a>
     <a href="#contact">Contact</a>
   </div>
@@ -498,7 +501,7 @@ footer a:hover::after{transform:scaleX(1)}
   <a href="#services">Services</a>
   <a href="#skills">Skills</a>
   <a href="#tech">Tech</a>
-  <a href="#projects">Projects</a>
+  <a href="projects.html">Projects</a>
   <a href="#journey">Journey</a>
   <a href="#contact">Contact</a>
 </div>
@@ -516,7 +519,7 @@ footer a:hover::after{transform:scaleX(1)}
       <h1 class="r r1"><span class="grad">KIZAR</span><br><span class="line2">from Algiers, Algeria</span></h1>
       <p class="hero-sub r r2">Full-stack builder — websites with real backends, Android apps, bots and trading tools. Live on VPS, domains or serverless.</p>
       <div class="hero-actions r r3">
-        <a href="#projects" class="btn btn-fill mag">See my work</a>
+        <a href="projects.html" class="btn btn-fill mag">See my work</a>
         <a href="https://github.com/rkkizar777-design" target="_blank" class="btn btn-ghost mag">GitHub ↗</a>
       </div>
       <div class="hero-stats r r4">
@@ -751,6 +754,7 @@ footer a:hover::after{transform:scaleX(1)}
     <div class="section-tag r">Projects</div>
     <h2 class="r r1">What I've <span class="hl">built</span></h2>
     <p class="section-desc r r2">Real apps, real problems, real solutions — app and website in one place.</p>
+    <div class="projects-cta r r2"><a href="projects.html">View all projects</a></div>
     <div class="projects-grid">
       <div class="project-card lostnote r r2">
         <div class="project-info">

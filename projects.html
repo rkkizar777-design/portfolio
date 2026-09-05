@@ -3,8 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Projects by KIZAR: LostNote, GitSearch, KIZ Player. Every product described.">
-<title>Projects â€” KIZAR</title>
+<meta name="description" content="Projects by KIZAR: LostNote, GitSearch, KIZ Player. Every product described. Offline-first, no servers, no tracking.">
+<meta name="author" content="Makhlouf Razik">
+<title>Projects — KIZAR</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="canonical" href="https://portfolio-two-mu-dt02sayw8r.vercel.app/projects.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="KIZAR">
+<meta property="og:title" content="Projects — KIZAR">
+<meta property="og:description" content="LostNote, GitSearch and KIZ Player — every product described. Offline-first, no servers, no tracking.">
+<meta property="og:url" content="https://portfolio-two-mu-dt02sayw8r.vercel.app/projects.html">
+<meta property="og:image" content="https://portfolio-two-mu-dt02sayw8r.vercel.app/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#060606">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -121,6 +132,9 @@ h2 .hl::after{content:'';position:absolute;bottom:-4px;left:0;right:0;height:3px
 .hero-stat+.hero-stat{border-left:1px solid var(--border)}
 .hero-stat .num{font-size:38px;font-weight:700;color:var(--amber);line-height:1}
 .hero-stat .label{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:1.5px;margin-top:8px;line-height:1.6}
+.hero-availability{display:inline-flex;align-items:center;gap:11px;margin-top:30px;padding:11px 20px;border:1px solid rgba(52,211,153,.25);border-radius:999px;background:rgba(52,211,153,.05);font-size:13px;color:var(--text2)}
+.hero-availability .dot{width:8px;height:8px;border-radius:50%;background:#34d399;box-shadow:0 0 12px rgba(52,211,153,.5)}
+.hero-availability b{color:var(--text);font-weight:600}
 
 /* ===== HERO WORD ROTOR ===== */
 .showcase{position:relative;display:flex;align-items:center;justify-content:center}
@@ -179,7 +193,7 @@ h2 .hl::after{content:'';position:absolute;bottom:-4px;left:0;right:0;height:3px
 .process-card h3{font-size:17px;font-weight:600;margin-bottom:10px}
 .process-card p{font-size:13.5px;color:var(--text2);line-height:1.7}
 .process-out{display:inline-flex;align-items:center;gap:8px;margin-top:18px;font-size:12px;color:var(--text3)}
-.process-out::before{content:'â†’';color:var(--amber)}
+.process-out::before{content:'→';color:var(--amber)}
 
 /* ===== SERVICES ===== */
 .services-list{display:grid;grid-template-columns:1fr 1fr;gap:1px;margin-top:44px;border:1px solid var(--border);border-radius:16px;overflow:hidden;background:var(--border)}
@@ -232,6 +246,9 @@ h2 .hl::after{content:'';position:absolute;bottom:-4px;left:0;right:0;height:3px
 
 /* ===== PROJECTS ===== */
 .projects-grid{display:grid;gap:28px;margin-top:40px}
+.projects-cta{margin-top:32px}
+.projects-cta a{display:inline-flex;align-items:center;gap:8px;padding:13px 26px;border-radius:12px;font-size:13px;font-weight:700;background:linear-gradient(135deg,var(--amber),var(--lime));color:#000;transition:all .3s var(--ease)}
+.projects-cta a:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(245,158,11,.25)}
 .lostnote{--pj1:var(--amber);--pj2:var(--coral);--pj-glow:var(--coral-glow)}
 .gitsearch{--pj1:var(--amber);--pj2:var(--lime);--pj-glow:var(--lime-glow)}
 .gitstore{--pj1:var(--lime);--pj2:var(--amber);--pj-glow:var(--amber-glow)}
@@ -535,7 +552,7 @@ footer a:hover::after{transform:scaleX(1)}
             </div>
             <h3>LostNote<span class="dot">.</span></h3>
             <div class="desc">LostNote is an offline-first notes app that lives entirely on your device. Notes, photos and PDFs stay local, while phone &harr; PC sync happens in seconds over P2P WebRTC with a single 5-digit code. Archive and trash travel exactly as they are, and a PIN-locked vault keeps sensitive notes separate. Zero servers, zero accounts, zero tracking.</div>
-            <p class="pp-how"><b>Role</b> â€” product, UI, Android + desktop app, P2P sync</p>
+            <p class="pp-how"><b>Role</b> — product, UI, Android + desktop app, P2P sync</p>
             <div class="pp-feat">
               <div><b>Offline-first</b><span>Notes, photos and PDFs live on the device. Nothing ever leaves it.</span></div>
               <div><b>P2P sync</b><span>Phone &harr; PC over WebRTC with one 5-digit code. No account needed.</span></div>
@@ -573,7 +590,7 @@ footer a:hover::after{transform:scaleX(1)}
             </div>
             <h3>GitSearch<span class="dot">.</span></h3>
             <div class="desc">GitSearch turns the raw GitHub API into an Android and Windows app. Search repos and users, read READMEs inside the app, download APKs straight from releases, chat with developers and earn achievements along the way. A built-in APK store keeps every release one tap away. Zero servers, zero tracking, 48 releases in about two months.</div>
-            <p class="pp-how"><b>Role</b> â€” product, UI, API integration, Java native plugins</p>
+            <p class="pp-how"><b>Role</b> — product, UI, API integration, Java native plugins</p>
             <div class="pp-feat">
               <div><b>Repo search</b><span>Live GitHub search across repositories, users and topics.</span></div>
               <div><b>APK store</b><span>Download APKs straight from releases, all inside the app.</span></div>
@@ -612,7 +629,7 @@ footer a:hover::after{transform:scaleX(1)}
             </div>
             <h3>KIZ Player<span class="dot">.</span></h3>
             <div class="desc">KIZ Player is a native Android music player built from scratch in Java. It reads your offline library, sorts it into moods with on-device AI, downloads audio straight from YouTube and renders a full-screen visualizer while a track plays. Your library never leaves the device, and the app works with no signal, no account and no server.</div>
-            <p class="pp-how"><b>Role</b> â€” product, UI, Java core, mood model, download engine</p>
+            <p class="pp-how"><b>Role</b> — product, UI, Java core, mood model, download engine</p>
             <div class="pp-feat">
               <div><b>Mood AI</b><span>An on-device model sorts your library into moods automatically.</span></div>
               <div><b>YouTube download</b><span>Pull audio straight from YouTube and add it to your library.</span></div>

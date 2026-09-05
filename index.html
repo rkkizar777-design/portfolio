@@ -3,7 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KIZAR — Builder from Algiers</title>
+<meta name="description" content="Portfolio of Makhlouf Razik (KIZAR) from Algiers — AI-focused full-stack builder. Websites with real backends, Android apps, Telegram bots, trading tools and automation. Offline-first, no servers, no tracking.">
+<meta name="author" content="Makhlouf Razik">
+<title>KIZAR — AI Software Engineer from Algiers</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="canonical" href="https://portfolio-two-mu-dt02sayw8r.vercel.app/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="KIZAR">
+<meta property="og:title" content="KIZAR — AI Software Engineer from Algiers">
+<meta property="og:description" content="Websites with real backends, Android apps, bots, trading tools and automation. Offline-first, no servers, no tracking.">
+<meta property="og:url" content="https://portfolio-two-mu-dt02sayw8r.vercel.app/">
+<meta property="og:image" content="https://portfolio-two-mu-dt02sayw8r.vercel.app/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#060606">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -120,6 +132,9 @@ h2 .hl::after{content:'';position:absolute;bottom:-4px;left:0;right:0;height:3px
 .hero-stat+.hero-stat{border-left:1px solid var(--border)}
 .hero-stat .num{font-size:38px;font-weight:700;color:var(--amber);line-height:1}
 .hero-stat .label{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:1.5px;margin-top:8px;line-height:1.6}
+.hero-availability{display:inline-flex;align-items:center;gap:11px;margin-top:30px;padding:11px 20px;border:1px solid rgba(52,211,153,.25);border-radius:999px;background:rgba(52,211,153,.05);font-size:13px;color:var(--text2)}
+.hero-availability .dot{width:8px;height:8px;border-radius:50%;background:#34d399;box-shadow:0 0 12px rgba(52,211,153,.5)}
+.hero-availability b{color:var(--text);font-weight:600}
 
 /* ===== HERO WORD ROTOR ===== */
 .showcase{position:relative;display:flex;align-items:center;justify-content:center}
@@ -375,7 +390,7 @@ h2 .hl::after{content:'';position:absolute;bottom:-4px;left:0;right:0;height:3px
 .tl-tag{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#0b0b0b;background:linear-gradient(90deg,var(--amber),var(--lime));padding:3px 10px;border-radius:6px;margin-bottom:12px;font-weight:700}
 
 /* ===== CONTACT ===== */
-.contact-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:40px}
+.contact-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:40px}
 .contact-card{padding:32px 24px;border-radius:var(--radius);border:1px solid var(--border);background:var(--surface);text-decoration:none;color:var(--text);transition:all .45s var(--ease);text-align:center;position:relative;overflow:hidden;backdrop-filter:blur(8px)}
 .contact-card::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 50% 130%,var(--amber-glow),transparent 65%);opacity:0;transition:opacity .4s}
 .contact-card:hover{border-color:rgba(245,158,11,.15);transform:translateY(-6px);box-shadow:0 20px 60px rgba(0,0,0,.3)}
@@ -384,6 +399,11 @@ h2 .hl::after{content:'';position:absolute;bottom:-4px;left:0;right:0;height:3px
 .contact-card:hover .cc-icon{transform:scale(1.15) translateY(-4px)}
 .contact-card h3{font-size:15px;font-weight:600;margin-bottom:4px;position:relative;z-index:1}
 .contact-card p{font-size:12px;color:var(--text2);position:relative;z-index:1;word-break:break-all}
+.cc-links{display:flex;gap:8px;justify-content:center;margin-top:12px;position:relative;z-index:1}
+.cc-links a{flex:1;padding:9px 10px;border-radius:10px;border:1px solid rgba(245,158,11,.28);font-size:11px;font-weight:600;color:var(--amber);background:rgba(245,158,11,.06);transition:all .3s var(--ease);text-align:center;display:block}
+.cc-links a:hover{background:rgba(245,158,11,.14);transform:translateY(-2px)}
+.cc-links a.filled{color:#0a0a0a;background:linear-gradient(135deg,var(--amber),var(--lime));border-color:transparent}
+.cc-links a.filled:hover{box-shadow:0 8px 24px rgba(245,158,11,.28)}
 
 /* ===== FOOTER ===== */
 footer{text-align:center;padding:56px 24px;border-top:1px solid var(--border);font-size:12px;color:var(--text3)}
@@ -519,13 +539,18 @@ footer a:hover::after{transform:scaleX(1)}
       <h1 class="r r1"><span class="grad">KIZAR</span><br><span class="line2">from Algiers, Algeria</span></h1>
       <p class="hero-sub r r2">Full-stack builder — websites with real backends, Android apps, bots and trading tools. Live on VPS, domains or serverless.</p>
       <div class="hero-actions r r3">
-        <a href="projects.html" class="btn btn-fill mag">See my work</a>
+        <a href="projects.html" class="btn btn-fill mag">What I've built</a>
         <a href="https://github.com/rkkizar777-design" target="_blank" class="btn btn-ghost mag">GitHub ↗</a>
+        <a href="cv.pdf" download class="btn btn-ghost mag">Download CV · EN</a>
+        <a href="cv-fr.pdf" download class="btn btn-ghost mag">CV · FR</a>
       </div>
       <div class="hero-stats r r4">
         <div class="hero-stat"><div class="num" data-count="48">0</div><div class="label">Releases<br>shipped in 2 months</div></div>
         <div class="hero-stat"><div class="num" data-count="9500">0</div><div class="label">Lines in<br>one file</div></div>
         <div class="hero-stat"><div class="num" data-count="0">0</div><div class="label">Servers<br>for my released apps</div></div>
+      </div>
+      <div class="hero-availability r r5">
+        <span class="dot"></span><b>Open to work</b> — freelance &amp; collaborations
       </div>
     </div>
     <div class="showcase r r2">
@@ -983,6 +1008,15 @@ footer a:hover::after{transform:scaleX(1)}
         <h3>LinkedIn</h3>
         <p>RAZIK Makhlouf</p>
       </a>
+      <div class="contact-card r r5 mag">
+        <div class="cc-icon">CV</div>
+        <h3>Resume / CV</h3>
+        <p>Makhlouf Razik · AI Engineer</p>
+        <div class="cc-links">
+          <a href="cv.pdf" class="filled" target="_blank">EN</a>
+          <a href="cv-fr.pdf" target="_blank">FR</a>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -996,6 +1030,14 @@ footer a:hover::after{transform:scaleX(1)}
   /* ===== LOADER ===== */
   (function(){
     var loader=document.getElementById('loader');
+    if(!loader)return;
+    var seen=false;
+    try{seen=sessionStorage.getItem('kizarLoaded')==='1'}catch(e){}
+    if(seen){
+      loader.style.display='none';
+      loader.classList.add('done');
+      return;
+    }
     var fill=document.getElementById('loaderFill');
     var start=null,dur=1300;
     function step(ts){
@@ -1003,7 +1045,10 @@ footer a:hover::after{transform:scaleX(1)}
       var p=Math.min(1,(ts-start)/dur);
       if(fill)fill.style.width=(p*100)+'%';
       if(p<1){requestAnimationFrame(step)}
-      else{setTimeout(function(){loader.classList.add('done')},350)}
+      else{setTimeout(function(){
+        loader.classList.add('done');
+        try{sessionStorage.setItem('kizarLoaded','1')}catch(e){}
+      },350)}
     }
     requestAnimationFrame(step);
   })();

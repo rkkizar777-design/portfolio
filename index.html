@@ -414,6 +414,11 @@ footer a:hover::after{transform:scaleX(1)}
 /* ===== MAGNETIC ===== */
 .mag{display:inline-block;transition:transform .3s var(--ease)}
 
+/* ===== SEE MORE ===== */
+.more-hide{display:none}
+.more-btn{display:block;width:fit-content;margin:26px auto 0;padding:12px 30px;border-radius:999px;background:var(--surface);border:1px solid var(--border);color:var(--amber);font-size:13px;font-weight:600;letter-spacing:.3px;cursor:pointer;font-family:inherit;transition:all .3s var(--ease)}
+.more-btn:hover{border-color:rgba(245,158,11,.45);background:var(--amber-glow);transform:translateY(-2px)}
+
 /* ===== RESPONSIVE ===== */
 @media(max-width:900px){
   .skills-grid,.stats-grid{grid-template-columns:repeat(2,1fr)}
@@ -654,7 +659,7 @@ footer a:hover::after{transform:scaleX(1)}
     <div class="section-tag r">Services</div>
     <h2 class="r r1">What I can <span class="hl">build for you</span></h2>
     <p class="section-desc r r2">Everything from one person. No agency, no middlemen. From idea to live product — websites, backends, bots and domains.</p>
-    <div class="services-list">
+    <div class="services-list" data-more data-more-limit="4">
       <div class="service-card r r1">
         <div class="service-head"><div class="service-num">01</div><div class="service-cat">Design</div></div>
         <div class="service-info">
@@ -737,7 +742,7 @@ footer a:hover::after{transform:scaleX(1)}
     <div class="section-tag r">Skills</div>
     <h2 class="r r1">What I <span class="hl">actually</span> do</h2>
     <p class="section-desc r r2">Not a buzzword list. Things I've built with, broken, and fixed.</p>
-    <div class="skills-grid">
+    <div class="skills-grid" data-more data-more-limit="4">
       <div class="skill-card r r1"><div class="skill-num">01</div><h3>Android / Capacitor</h3><p>Native plugins in Java. Download managers, file providers, install intents. Not just wrapping a webview.</p></div>
       <div class="skill-card r r2"><div class="skill-num">02</div><h3>API Integration</h3><p>GitHub API, rate limiting, retry logic with exponential backoff. Layers that survive 503 errors gracefully.</p></div>
       <div class="skill-card r r3"><div class="skill-num">03</div><h3>Frontend / React</h3><p>Complex state, 9500+ line files, real-time updates, scroll-driven animations. Not pretty — functional.</p></div>
@@ -756,7 +761,7 @@ footer a:hover::after{transform:scaleX(1)}
     <div class="section-tag r">Tech Stack</div>
     <h2 class="r r1">Tools of the <span class="hl">trade</span></h2>
     <p class="section-desc r r2">Every tool I use has a reason. No framework for the sake of framework.</p>
-    <div class="tech-grid">
+    <div class="tech-grid" data-more data-more-limit="6">
       <div class="tech-item r r1" style="--t1:#61dafb;--t2:#0ea5e9"><div class="tech-badge">Re</div><span>React</span><div class="tech-bc"></div></div>
       <div class="tech-item r r2" style="--t1:#56b6ff;--t2:#155e9e"><div class="tech-badge">Ca</div><span>Capacitor</span><div class="tech-bc"></div></div>
       <div class="tech-item r r3" style="--t1:#ffa657;--t2:#e0531d"><div class="tech-badge">Ja</div><span>Java</span><div class="tech-bc"></div></div>
@@ -1226,6 +1231,36 @@ footer a:hover::after{transform:scaleX(1)}
   },{threshold:0.5});
   var sg=document.querySelector('.stats-grid');
   if(sg)statsCountObs.observe(sg);
+
+  /* ===== SEE MORE (mobile) ===== */
+  var moreMq=window.matchMedia('(max-width:768px)');
+  function initMore(){
+    document.querySelectorAll('[data-more]').forEach(function(grid){
+      var limit=parseInt(grid.getAttribute('data-more-limit'),10)||4;
+      var kids=[].slice.call(grid.children);
+      var extra=kids.slice(limit);
+      if(!extra.length)return;
+      var open=false;
+      var btn=document.createElement('button');
+      btn.type='button';
+      btn.className='more-btn';
+      btn.textContent='See more';
+      grid.parentNode.insertBefore(btn,grid.nextSibling);
+      function sync(){
+        extra.forEach(function(el){el.classList.toggle('more-hide',moreMq.matches&&!open)});
+        btn.style.display=(moreMq.matches&&extra.length)?'block':'none';
+      }
+      btn.addEventListener('click',function(){
+        open=!open;
+        btn.textContent=open?'Show less':'See more';
+        sync();
+      });
+      sync();
+      function onMq(){ if(!moreMq.matches&&open){open=false;btn.textContent='See more'} sync(); }
+      if(moreMq.addEventListener)moreMq.addEventListener('change',onMq); else moreMq.addListener(onMq);
+    });
+  }
+  initMore();
 
 })();
 </script>
